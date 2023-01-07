@@ -53,7 +53,6 @@ function App() {
                 </div>
                 <Card.Body>
                   <Card.Title>{item.name}
-
                   </Card.Title>
                   <Card.Text>
                     {item.description}
