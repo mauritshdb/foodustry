@@ -1,13 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import NavbarTop from './Components/TheNavbar';
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <>
+    <NavbarTop/>
+    <Outlet/>
+    </>,
+    errorElement:<center>Page Not Found or something error😥</center>,
+    children:[
+      {
+        path: '/',
+        element: <App/>
+      }
+    ]
+  }
+])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router}/>
   </React.StrictMode>
 );
 
