@@ -1,6 +1,6 @@
 import Axios from "axios";
 
-const Register = (email, password) => {
+const register = (email, password) => {
     return Axios({
         method: 'post',
         url: `${process.env.REACT_APP_BASEURL}/api/v1/register`,
@@ -14,4 +14,4 @@ const Register = (email, password) => {
     });
 }
 
-export default Register;
+export default register;
