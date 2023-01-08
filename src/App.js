@@ -10,8 +10,8 @@ import getUser from './api_folder/ApiGetUser'
 
 function App() {
   const [food, setFood] = useState([]);
-  const [name, setName] = useState([])
-  const [img, setImg] = useState([]);
+  const [name, setName] = useState();
+  const [img, setImg] = useState();
 
   const isLogin = Boolean(localStorage.getItem("token") || false)
 
