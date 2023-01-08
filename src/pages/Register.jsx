@@ -5,9 +5,29 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
+import register from "../api_folder/ApiRegister";
 
 function Register() {
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const username = document.getElementById('floatingName').value;
+        const email = document.getElementById('floatingEmail').value;
+        const password = document.getElementById('floatingPassword').value;
+        const passwordRepeat = document.getElementById('floatingRePassword').value;
+        const role = document.getElementById('floatingSelect').value;
+        const proflePictureUrl = document.getElementById('formImg').value;
+        const phoneNumber = document.getElementById('floatingNumber').value;
+        register(username, email, password, passwordRepeat, role, proflePictureUrl, phoneNumber).then((response) => {
+            alert('Registered!')
+            document.getElementById('floatingName').value = "";
+            document.getElementById('floatingEmail').value = "";
+            document.getElementById('floatingPassword').value = "";
+            document.getElementById('floatingRePassword').value = "";
+            document.getElementById('floatingSelect').value = "Open this select menu";
+            document.getElementById('formImg').value = "";
+            document.getElementById('floatingNumber').value = "";
+        })
+
 
     }
 
@@ -58,14 +78,14 @@ function Register() {
                                 <FloatingLabel controlId="floatingSelect" label="Choose a role" className="mb-3">
                                     <Form.Select aria-label="Floating label select example">
                                         <option>Open this select menu</option>
-                                        <option value="1">user</option>
-                                        <option value="2">admin</option>
+                                        <option value="user">User</option>
+                                        <option value="admin">Admin</option>
                                     </Form.Select>
                                 </FloatingLabel>
                             </Col>
                             <Col md>
                                 <Form.Group controlId="formImg" className="mb-3">
-                                    <Form.Control type="text" size="lg" placeholder="Image URL"/>
+                                    <Form.Control type="text" size="lg" placeholder="Image URL" />
                                 </Form.Group>
                             </Col>
                         </Row>
