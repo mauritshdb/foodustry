@@ -46,11 +46,11 @@ function Register() {
                         </FloatingLabel>
 
                         <FloatingLabel
-                            controlId="floatingInput"
+                            controlId="floatingNumber"
                             label="Phone Number"
                             className="mb-3"
                         >
-                            <Form.Control type="number" placeholder="Enter phonenumber" />
+                            <Form.Control type="number" placeholder="Enter phone number" />
                         </FloatingLabel>
 
                         <Row>
@@ -58,8 +58,8 @@ function Register() {
                                 <FloatingLabel controlId="floatingSelect" label="Choose a role" className="mb-3">
                                     <Form.Select aria-label="Floating label select example">
                                         <option>Open this select menu</option>
-                                        <option value="1">User</option>
-                                        <option value="2">Admin</option>
+                                        <option value="1">user</option>
+                                        <option value="2">admin</option>
                                     </Form.Select>
                                 </FloatingLabel>
                             </Col>
