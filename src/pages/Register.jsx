@@ -16,7 +16,7 @@ function Register() {
             <div className="zxc">
                 <div className="c1">
                     <h1 style={{ color: 'white' }}>Register</h1>
-                    <Form>
+                    <Form onSubmit={handleSubmit}>
                         <FloatingLabel
                             controlId="floatingName"
                             label="Name"
