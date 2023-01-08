@@ -1,5 +1,5 @@
 import React from "react";
-import './Login.css';
+import '../css/Login.css';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -12,17 +12,21 @@ function Login() {
         const username = document.getElementById('floatingInput').value;
         const password = document.getElementById('floatingPassword').value;
         login(username, password)
-          .then(function (response) {
-            if (response.data.user) {
-              // Login successful, do something here
-              localStorage.setItem("token", response.data.token)
-              window.location.assign("/");
-            } else {
-              // Login failed, do something else here
-              alert('Something error, check backend')
-            }
-          });
-      }
+            .then(function (response) {
+                if (response.data.user) {
+                    // Login successful, do something here
+                    localStorage.setItem("token", response.data.token)
+                    window.location.assign("/");
+                } else {
+                    // Login failed, do something else here
+                    alert('Something error, check backend')
+                }
+            });
+    }
+
+    const handleBtn = () => {
+        window.location.assign('/register')
+    }
 
     return (
         <>
@@ -40,10 +44,14 @@ function Login() {
                         <FloatingLabel controlId="floatingPassword" label="Password">
                             <Form.Control type="password" placeholder="Password" />
                         </FloatingLabel>
+
                         <Button variant="secondary" type="submit" className="mt-3">
                             Sign in
                         </Button>
                     </Form>
+                    <Button variant="secondary" type="button" className="mt-3" onClick={handleBtn}>
+                        Sign up
+                    </Button>
                 </div>
             </div>
 
