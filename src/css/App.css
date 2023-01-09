@@ -5,10 +5,35 @@
   padding: 1rem 20px;
 }
 
+.testPosition {
+  position: fixed;
+  top: 64px;
+  right: 96px;
+  border-radius: 12px;
+  border: 1px solid grey;
+  width: 280px;
+}
+
+@media screen and (max-width:1024px) {
+  .testPosition {
+    position: fixed;
+    top: 64px;
+    right: -100%;
+    border-radius: 12px;
+    border: 1px solid grey;
+    width: 280px;
+  }
+}
+
+.info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 256px;
+}
+
 .userr {
-  position: relative;
-  background-color: red;
-  width: 120px;
+  color: white;
 }
 
 .zxc {
@@ -66,11 +91,12 @@
   font-family: 'Oswald', sans-serif;
 }
 
-.home, .login, .user {
+.home,
+.login,
+.user {
   display: flex;
   height: 90vh;
   align-items: center;
   justify-content: center;
   font-size: 3rem;
 }
-
