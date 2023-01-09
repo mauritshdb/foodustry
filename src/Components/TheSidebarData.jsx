@@ -1,7 +1,7 @@
 import React from "react";
 import * as IoIcons from 'react-icons/io';
+import * as IoIcons5 from 'react-icons/io5';
 import * as BiIcons from 'react-icons/bi';
-import * as HiIcons from 'react-icons/hi';
 
 const isLogin = Boolean(localStorage.getItem("token") || false)
 
@@ -19,9 +19,9 @@ export const SidebarData = [
         cName: 'nav-text',
     },
     {
-        title: 'User',
-        path: '/user',
-        icon: <HiIcons.HiUser/>,
+        title: 'Favorites',
+        path: '/favorites',
+        icon: <IoIcons5.IoFastFoodSharp/>,
         cName: 'nav-text',
     }
 ]
