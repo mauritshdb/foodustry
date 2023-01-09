@@ -49,9 +49,7 @@ function Login() {
                             Sign in
                         </Button>
                     </Form>
-                    <Button variant="secondary" type="button" className="mt-3" onClick={handleBtn}>
-                        Sign up
-                    </Button>
+                    <h4 className="mt-3" style={{ color: 'grey' , textAlign: 'center'}}>Don't have an account? <a href="/register" style={{ color: 'white' }}>Sign up</a></h4>
                 </div>
             </div>
 
