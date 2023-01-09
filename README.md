@@ -1,6 +1,6 @@
 # Foodustry (WIP)
 
-This is my final project was develop in bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Final Project: Food Journal
 
 ## How to download the project
 
