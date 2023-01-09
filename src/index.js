@@ -9,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Register from './pages/Register';
+import Favorite from './pages/FavFood';
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: '/register',
         element: <Register />
+      },
+      {
+        path: '/favorites',
+        element: <Favorite />
       },
     ]
   }
