@@ -13,6 +13,7 @@ export default function App() {
   const [food, setFood] = useState([]);
   const [name, setName] = useState();
   const [img, setImg] = useState();
+  const [role, setRole] = useState();
 
   const isLogin = Boolean(localStorage.getItem("token") || false)
 
@@ -61,6 +62,7 @@ export default function App() {
       getUser().then(function (res) {
         setName(res.data.user.name)
         setImg(res.data.user.profilePictureUrl)
+        setRole(res.data.user.role)
       })
     }
 
@@ -121,9 +123,16 @@ export default function App() {
           })}
         </div>
       </div>
-      <img src={img} style={{ width: '10%' }} />
-      <h1 className='userr'>{name}</h1>
+      <div className='testPosition'>
+        <div className='info'>
+          <img src={img} style={{ width: '50%' , marginRight: '12px'}}/>
+          <div>
+            <h2 className='userr'>{name}</h2>
+            <h6 className='userr'>{role}</h6>
+          </div>
+        </div>
 
+      </div>
     </>
   );
 }
