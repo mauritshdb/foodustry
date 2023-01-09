@@ -1,6 +1,5 @@
 # Foodustry (WIP)
 
-**Deployment:** (WIP)[/]
 **Deployment:** [WIP](www.google.com)
 
 Final Project: Food Journal
