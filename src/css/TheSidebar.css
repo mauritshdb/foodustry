@@ -1,12 +1,13 @@
-@media (min-width: 600px) and (max-width:768px){
+@media screen and (max-width: 1000px){
     .nav-menu {
-        background-color: #101010;
+        background-color: #ffffff;
         width: 50px;
         height: 100vh;
         display: flex;
         justify-content: center;
         position: fixed;
         top: 0;
+        left: -100%;
         transition: 850ms;
     }
 }
@@ -19,6 +20,7 @@
     justify-content: center;
     position: fixed;
     top: 0;
+    /* left: -100%; */
     transition: 850ms;
 }
 
