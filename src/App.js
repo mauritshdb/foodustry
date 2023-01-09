@@ -6,9 +6,7 @@ import * as AiIcons from 'react-icons/ai';
 import { IconContext } from "react-icons";
 import getData from './api_folder/ApiFood';
 import getUser from './api_folder/ApiGetUser';
-// import handleLike from './api_folder/ApiLikeUnlike';
 import Axios from 'axios';
-import { Row } from 'react-bootstrap';
 
 
 export default function App() {
@@ -26,36 +24,36 @@ export default function App() {
 
   const handleLike = (id, isLike) => {
     if (isLogin) {
-        if (isLike) {
-            return Axios({
-                method: 'post',
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/unlike`,
-                headers: {
-                    apiKey: `${process.env.REACT_APP_APIKEY}`,
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                data: { foodId: id },
-            }).then(res => {
-                GetFood();
-            })
-        } else {
-            return Axios({
-                method: 'post',
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/like`,
-                headers: {
-                    apiKey: `${process.env.REACT_APP_APIKEY}`,
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-                data: { foodId: id },
-            }).then(res => {
-                GetFood();
-            })
-        }
+      if (isLike) {
+        return Axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_BASEURL}/api/v1/unlike`,
+          headers: {
+            apiKey: `${process.env.REACT_APP_APIKEY}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          data: { foodId: id },
+        }).then(res => {
+          GetFood();
+        })
+      } else {
+        return Axios({
+          method: 'post',
+          url: `${process.env.REACT_APP_BASEURL}/api/v1/like`,
+          headers: {
+            apiKey: `${process.env.REACT_APP_APIKEY}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          data: { foodId: id },
+        }).then(res => {
+          GetFood();
+        })
+      }
     } else {
-        alert('login first');
-        window.location.assign('/login');
+      alert('login first');
+      window.location.assign('/login');
     }
-}
+  }
 
   useEffect(() => {
     GetFood();
@@ -70,9 +68,6 @@ export default function App() {
 
   return (
     <>
-    <Row>
-      
-    </Row>
       <div className='zxc'>
         <div className='c1'>
           {food.map((item, index) => {
@@ -127,7 +122,7 @@ export default function App() {
         </div>
       </div>
       <img src={img} style={{ width: '10%' }} />
-        <h1 className='userr'>{name}</h1>
+      <h1 className='userr'>{name}</h1>
 
     </>
   );
