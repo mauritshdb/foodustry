@@ -1,5 +1,7 @@
 # Foodustry (WIP)
 
+**Deployment: WIP**
+
 Final Project: Food Journal
 
 ## How to download the project
