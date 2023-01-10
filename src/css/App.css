@@ -2,34 +2,59 @@
 
 .c1 {
   margin: 1rem 0px;
-  padding: 1rem 20px;
-}
-
-.testPosition {
-  position: fixed;
-  top: 64px;
-  right: 96px;
-  border-radius: 12px;
-  border: 1px solid grey;
-  width: 280px;
+  padding: 8px 20px;
 }
 
 @media screen and (max-width:1024px) {
-  .testPosition {
-    position: fixed;
-    top: 64px;
-    right: -100%;
-    border-radius: 12px;
-    border: 1px solid grey;
-    width: 280px;
+  .kartu {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 5px;
+    position: relative;
+    bottom: 104vh;
+    left: -100%;
+    width: 200px;
+    background-color: rgb(36, 36, 36);
   }
 }
 
-.info {
+.kartu {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  position: relative;
+  bottom: 104vh;
+  left: 75vw;
+  width: 200px;
+  background-color: rgb(36, 36, 36);
+}
+
+.kartu:hover {
+  box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.titik {
+  height: 25px;
+  width: 25px;
+  background-color: #fff;
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 256px;
+  cursor: pointer;
+}
+
+.kartu .titik {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 25px;
+}
+
+.kontainer {
+  padding: 2px 16px;
+}
+
+img {
+  border-radius: 5px 5px 0 0;
 }
 
 .userr {
@@ -60,6 +85,7 @@
   font-weight: bold;
   text-align: right;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .card .pillRating {
@@ -69,6 +95,7 @@
   font-weight: bold;
   text-align: right;
   font-size: 25px;
+  cursor: pointer;
 }
 
 .pillBadge {
