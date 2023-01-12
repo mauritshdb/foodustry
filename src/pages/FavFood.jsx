@@ -71,7 +71,6 @@ function FavFood() {
                                 </div>
                             </Card.Header>
                             <Card.Img variant='mid' src={item.imageUrl} style={{ height: '300px', objectFit: 'cover', position: 'relative' }} />
-
                             <Badge pill bg="light" text='dark' className='pillRating'>
                                 <IconContext.Provider value={{ color: 'orange' }}>
                                     <AiIcons.AiFillStar />
