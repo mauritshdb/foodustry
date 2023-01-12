@@ -4,6 +4,7 @@ import Badge from 'react-bootstrap/Badge';
 import { useEffect, useState } from 'react';
 import * as AiIcons from 'react-icons/ai';
 import * as HiIcons from "react-icons/hi";
+import * as MdIcons from "react-icons/md";
 import { IconContext } from "react-icons/";
 import getData from './api_folder/ApiFood';
 import getUser from './api_folder/ApiGetUser';
@@ -13,9 +14,12 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import Form from 'react-bootstrap/Form';
+import { Col, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 export default function App() {
   const [food, setFood] = useState([]);
+  const [foodIds, setFoodIds] = useState([]);
 
   const [name, setName] = useState();
   const [email, setEmail] = useState();
@@ -24,24 +28,80 @@ export default function App() {
 
   const [role, setRole] = useState();
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = (name, email, img, phoneNumber) => {
-    setShow(name)
+  const [rating, setRating] = useState([]);
+
+  const [daRating, setDaRating] = useState();
+  const [daReview, setDaReview] = useState();
+
+  const [showA, setShowA] = useState(false);
+  const handleCloseA = () => setShowA(false);
+  const handleShowA = (name, email, img, phoneNumber) => {
+    setShowA(name)
     setName(name)
     setEmail(email)
     setImg(img)
     setPhoneNumber(phoneNumber)
   }
+  const [showB, setShowB] = useState(false);
+  const handleCloseB = () => setShowB(false);
+  const handleShowB = () => setShowB(true);
+  const [fullscreen, setFullscreen] = useState(true);
+
 
   const isLogin = Boolean(localStorage.getItem("token") || false)
+  const isAdmin = Boolean(localStorage.getItem("role") === 'admin')
 
+  // api get all foods
   const GetFood = () => {
-    getData().then(function (res) {
+    getData().then((res) => {
       setFood(res.data.data)
     });
   }
-
+  // api get food by id
+  const getFoodId = async (foodId) => {
+    const res = await Axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
+      headers: {
+        apiKey: `${process.env.REACT_APP_APIKEY}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    setFoodIds(res.data.data);
+  }
+  // api get food rating by id
+  const getRatings = async (foodId) => {
+    const res = await Axios({
+      method: 'get',
+      url: `${process.env.REACT_APP_BASEURL}/api/v1/food-rating/${foodId}`,
+      headers: {
+        apiKey: `${process.env.REACT_APP_APIKEY}`,
+        Authorization: `Bearer ${localStorage.getItem("token")}`
+      }
+    });
+    setRating(res.data.data);
+  }
+  // create food rating by id
+  const postRating = (foodId) => {
+    if (isLogin) {
+      return Axios({
+        method: 'post',
+        url: `${process.env.REACT_APP_BASEURL}/api/v1/rate-food/${foodId}`,
+        headers: {
+          apiKey: `${process.env.REACT_APP_APIKEY}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        data: {
+          rating: parseInt(daRating),
+          review: daReview
+        }
+      });
+    } else {
+      alert('Login first.')
+      window.location.assign('/login')
+    }
+  }
+  // api like and unlike
   const handleLike = (id, isLike) => {
     if (isLogin) {
       if (isLike) {
@@ -53,7 +113,7 @@ export default function App() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           data: { foodId: id },
-        }).then(res => {
+        }).then(() => {
           GetFood();
         })
       } else {
@@ -65,7 +125,7 @@ export default function App() {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           data: { foodId: id },
-        }).then(res => {
+        }).then(() => {
           GetFood();
         })
       }
@@ -75,9 +135,23 @@ export default function App() {
     }
   }
 
+  const handlePostReview = (foodId) => {
+    handleCloseB();
+    postRating(foodId);
+    GetFood();
+  }
+
+  const handleGetRating = (foodId) => {
+    setFullscreen(true)
+    handleShowB();
+    getRatings(foodId);
+    getFoodId(foodId);
+    localStorage.setItem("getFoodId", foodId);
+  }
+
   const handleDots = () => {
-    updateUser(name, email, img, phoneNumber).then((res) => {
-      handleClose();
+    updateUser(name, email, img, phoneNumber).then(() => {
+      handleCloseA();
       setName('')
       setEmail('')
       setImg('')
@@ -107,6 +181,14 @@ export default function App() {
     <>
       <div className='zxc'>
         <div className='c1'>
+
+          {isAdmin ? <Link to='/admin'><div className='adminButton'>
+            <div className='teksAdmin'>Admin Panel</div>
+            <IconContext.Provider value={{ color: 'white' }} >
+              <MdIcons.MdAdminPanelSettings />
+            </IconContext.Provider>
+          </div></Link> : <div></div>}
+
           {food.map((item, index) => {
             return (
               <Card key={index} text='light' bg='dark' border='secondary'>
@@ -117,7 +199,7 @@ export default function App() {
                 </Card.Header>
                 <Card.Img variant='mid' src={item.imageUrl} style={{ height: '300px', objectFit: 'cover', position: 'relative' }} />
 
-                <Badge pill bg="light" text='dark' className='pillRating'>
+                <Badge pill bg="light" text='dark' className='pillRating' onClick={() => handleGetRating(item.id)} >
                   <IconContext.Provider value={{ color: 'orange' }}>
                     <AiIcons.AiFillStar />
                     {item.rating}
@@ -161,9 +243,9 @@ export default function App() {
 
       {isLogin ?
         <div className='kartu'>
-          <img src={img} alt='Profile Picture' style={{ width: '100%' }} />
+          <img src={img} alt='Profile Picture' style={{ width: '100%', objectFit: 'cover' }} />
 
-          <div className='titik' onClick={() => handleShow(name, email, img, phoneNumber)}>
+          <div className='titik' onClick={() => handleShowA(name, email, img, phoneNumber)}>
             <IconContext.Provider value={{ color: 'black' }} >
               <HiIcons.HiOutlineDotsHorizontal />
             </IconContext.Provider>
@@ -174,11 +256,17 @@ export default function App() {
             <p className='userr'>{role}</p>
           </div>
         </div>
-        : <div></div>}
+        : <div></div>
+      }
 
-      <Modal show={show} onHide={handleClose}>
+      <div>
+
+      </div>
+
+
+      <Modal show={showA} onHide={handleCloseA} bg='dark' text='light' backdrop="static">
         <Modal.Header closeButton>
-          <Modal.Title>Change user</Modal.Title>
+          <Modal.Title>User Settings</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleDots}>
@@ -187,25 +275,86 @@ export default function App() {
               label="Name"
               className="mb-3"
             >
-              <Form.Control type="text" placeholder="Input name" value={name} onChange={(e) => setName(e.target.value)}/>
+              <Form.Control type="text" placeholder="Input name" value={name} onChange={(e) => setName(e.target.value)} />
             </FloatingLabel>
             <FloatingLabel controlId="floatingEmail" label="Email" className='mb-3'>
-              <Form.Control type="text" placeholder="Input email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+              <Form.Control type="text" placeholder="Input email" value={email} onChange={(e) => setEmail(e.target.value)} />
             </FloatingLabel>
             <FloatingLabel controlId="floatingUrl" label="Profile Url" className='mb-3'>
-              <Form.Control type="url" placeholder="Password" value={img} onChange={(e) => setImg(e.target.value)}/>
+              <Form.Control type="url" placeholder="Password" value={img} onChange={(e) => setImg(e.target.value)} />
             </FloatingLabel>
             <FloatingLabel controlId="floatingPhoneNumber" label="Phone number" className='mb-3'>
-              <Form.Control type="number" placeholder="Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}/>
+              <Form.Control type="number" placeholder="Number" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} />
             </FloatingLabel>
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
+          <Button variant="secondary" onClick={handleCloseA}>
             Close
           </Button>
           <Button variant="primary" onClick={handleDots}>
             Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showB} onHide={handleCloseB} fullscreen={fullscreen} bg='dark' text='light'>
+
+        <Modal.Body>
+          <div className='split kiri'>
+            <div className="kartu2">
+              <img src={foodIds.imageUrl} alt="John" style={{ width: "100%" }} />
+              <h1>{foodIds.name}</h1>
+              <p className="kartDesc">{foodIds.description}</p>
+              <Row>
+                <p>Ingredients</p>
+                {foodIds.ingredients && foodIds.ingredients.map((item, i) => {
+                  return (
+                    <Col key={i}>
+                      {item}
+                    </Col>
+                  )
+                })}
+
+              </Row>
+            </div>
+          </div>
+          <div className='split kanan'>
+            <h1>Create review</h1>
+            <FloatingLabel type='number' controlId="floatingSelect" label="Rating" onChange={(e) => setDaRating(e.target.value)}>
+              <Form.Select aria-label="Floating label select example">
+                <option>Choose rating</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </Form.Select>
+            </FloatingLabel>
+            <FloatingLabel controlId="floatingReview" label="Review" className='mt-3 mb-3' onChange={(e) => setDaReview(e.target.value)}>
+              <Form.Control type="text" placeholder="Review" />
+            </FloatingLabel>
+            <Button variant="success" onClick={() => handlePostReview(localStorage.getItem("getFoodId"))} className='mb-3'>
+              Post review
+            </Button>
+            <h1>Review</h1>
+            <div className='dalemKanan'>
+              {
+                rating && rating.map((item, index) => {
+                  return <div className="container" key={index}>
+                    <img src={item.user.profilePictureUrl} alt="Avatar" style={{ width: '90px', height: '90px', objectFit: 'cover' }} />
+                    <p><span>{item.user.name}</span> <IconContext.Provider value={{ color: 'orange' }}><AiIcons.AiFillStar /></IconContext.Provider>{item.rating}</p>
+                    <p>{item.review}</p>
+                  </div>
+                })
+              }
+            </div>
+          </div>
+
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseB}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
