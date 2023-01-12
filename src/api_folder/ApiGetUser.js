@@ -1,5 +1,5 @@
 import Axios from 'axios';
-
+// get user
 const getUser = () => {
   return Axios({
     method: 'get',
@@ -10,6 +10,5 @@ const getUser = () => {
     }
   })
 }
-
 
 export default getUser;
