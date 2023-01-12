@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './css/index.css';
 import App from './App';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import NavbarTop from './components/TheNavbar';
 import TSidebar from './components/TheSidebar';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import ErrorPage from './pages/ErrorPage';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
 import Register from './pages/Register';
 import Favorite from './pages/FavFood';
+import AdminPanel from './pages/AdminPanel';
 
 
 const router = createBrowserRouter([
@@ -20,7 +22,7 @@ const router = createBrowserRouter([
       {/* <NavbarTop /> */}
       <Outlet />
     </>,
-    errorElement: <h1>something error</h1>,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: '/',
@@ -42,6 +44,10 @@ const router = createBrowserRouter([
         path: '/favorites',
         element: <Favorite />
       },
+      {
+        path: '/admin',
+        element: <AdminPanel />,
+      }
     ]
   }
 ])
@@ -49,6 +55,6 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-    <RouterProvider router={router} />
+  <RouterProvider router={router} />
   // </React.StrictMode>
 );
