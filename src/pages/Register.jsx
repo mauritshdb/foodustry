@@ -17,7 +17,7 @@ function Register() {
         const role = document.getElementById('floatingSelect').value;
         const proflePictureUrl = document.getElementById('formImg').value;
         const phoneNumber = document.getElementById('floatingNumber').value;
-        register(username, email, password, passwordRepeat, role, proflePictureUrl, phoneNumber).then((response) => {
+        register(username, email, password, passwordRepeat, role, proflePictureUrl, phoneNumber).then(() => {
             alert('Registered!')
             document.getElementById('floatingName').value = "";
             document.getElementById('floatingEmail').value = "";
