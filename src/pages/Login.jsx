@@ -13,19 +13,10 @@ function Login() {
         const password = document.getElementById('floatingPassword').value;
         login(username, password)
             .then(function (response) {
-                if (response.data.user) {
-                    // Login successful, do something here
-                    localStorage.setItem("token", response.data.token)
-                    window.location.assign("/");
-                } else {
-                    // Login failed, do something else here
-                    alert('Something error, check backend')
-                }
+                localStorage.setItem("token", response.data.token)
+                localStorage.setItem("role", response.data.user.role);
+                window.location.assign('/');
             });
-    }
-
-    const handleBtn = () => {
-        window.location.assign('/register')
     }
 
     return (
@@ -49,7 +40,7 @@ function Login() {
                             Sign in
                         </Button>
                     </Form>
-                    <h4 className="mt-3" style={{ color: 'grey' , textAlign: 'center'}}>Don't have an account? <a href="/register" style={{ color: 'white' }}>Sign up</a></h4>
+                    <h4 className="mt-3" style={{ color: 'grey', textAlign: 'center' }}>Don't have an account? <a href="/register" style={{ color: 'white' }}>Sign up</a></h4>
                 </div>
             </div>
 
