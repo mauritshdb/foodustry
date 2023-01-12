@@ -10,7 +10,7 @@ function NavbarTop() {
 
   return (
     <>
-      <Navbar bg="light" expand='md' className="mb-3">
+      <Navbar variant='dark' expand='md' className="mb-3" >
         <Container fluid>
           
           <Navbar.Brand href="/">Foodustry</Navbar.Brand>
