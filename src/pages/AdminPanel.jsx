@@ -82,6 +82,7 @@ export default function AdminPanel() {
         const ingredients = ingr;
         createFood(name, description, imageUrl, ingredients).then((res) => {
             console.log(res.data);
+            getAllFood();
         });
     }
 
@@ -210,25 +211,25 @@ export default function AdminPanel() {
 
             <Modal show={showA} onHide={handleCloseA} bg='dark' text='light' backdrop="static">
                 <Modal.Header closeButton>
-                    <Modal.Title>User Settings</Modal.Title>
+                    <Modal.Title>Edit food</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleDots}>
+                    <Form onSubmit={handleEditFood}>
                         <FloatingLabel
                             controlId="floatingName"
                             label="Name"
                             className="mb-3"
                         >
-                            <Form.Control type="text" placeholder="Input name" value={''} onChange={(e) => setName(e.target.value)} />
+                            <Form.Control type="text" placeholder="Input name" value={''} onChange={(e) => setFoodName(e.target.value)} />
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingEmail" label="Email" className='mb-3'>
-                            <Form.Control type="text" placeholder="Input email" value={''} onChange={(e) => setEmail(e.target.value)} />
+                            <Form.Control type="text" placeholder="Input email" value={''} onChange={(e) => setFoodDesc(e.target.value)} />
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingUrl" label="Profile Url" className='mb-3'>
-                            <Form.Control type="url" placeholder="Password" value={''} onChange={(e) => setImg(e.target.value)} />
+                            <Form.Control type="url" placeholder="Password" value={''} onChange={(e) => setFoodIMG(e.target.value)} />
                         </FloatingLabel>
                         <FloatingLabel controlId="floatingPhoneNumber" label="Phone number" className='mb-3'>
-                            <Form.Control type="number" placeholder="Number" value={''} onChange={(e) => setPhoneNumber(e.target.value)} />
+                            <Form.Control type="number" placeholder="Number" value={''} onChange={(e) => setFoodIngre(e.target.value)} />
                         </FloatingLabel>
                     </Form>
                 </Modal.Body>
@@ -236,7 +237,7 @@ export default function AdminPanel() {
                     <Button variant="secondary" onClick={handleCloseA}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleDots}>
+                    <Button variant="primary" onClick={handleEditFood}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
