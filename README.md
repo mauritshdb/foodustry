@@ -1,6 +1,6 @@
 # Foodustry (WIP)
 
-**Deployment:** [WIP](www.google.com)
+**Deployment:** [WIP](https://earnest-salmiakki-f49ffe.netlify.app/)
 
 Final Project: Food Journal
 
