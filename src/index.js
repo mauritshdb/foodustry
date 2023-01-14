@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './css/index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import NavbarTop from './components/TheNavbar';
 import TSidebar from './components/TheSidebar';
 import ErrorPage from './pages/ErrorPage';
 import Login from './pages/Login';
@@ -19,7 +18,6 @@ const router = createBrowserRouter([
     path: '/',
     element: <>
       <TSidebar />
-      {/* <NavbarTop /> */}
       <Outlet />
     </>,
     errorElement: <ErrorPage />,
