@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import './css/index.css';
 import App from './App';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import TSidebar from './components/TheSidebar';
+import TSidebar from './components/TheSidebar.jsx';
 import ErrorPage from './pages/ErrorPage';
 import Login from './pages/Login';
 import Logout from './pages/Logout';
