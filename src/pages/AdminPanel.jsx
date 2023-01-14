@@ -31,6 +31,11 @@ export default function AdminPanel() {
         setFoodIngre(ingredients);
     }
 
+    const [showB, setShowB] = useState(false);
+    const handleCloseB = () => setShowB(false);
+    const handleShowB = () => setShowB(true);
+
+
     const [ingr, setIngr] = useState({
         ingredients: ''
     });
@@ -93,124 +98,71 @@ export default function AdminPanel() {
 
     return (
         <>
-        <div>
-            <h1>Work in Progress</h1>
-        </div>
-            <div className="split left">
-                <div className="centered">
-                    <div className='bagianKiri'>
-                        <h1 style={{ color: 'white' }}>Create food</h1>
-
-                        <Form onSubmit={handleSubmit}>
-                            <FloatingLabel
-                                controlId="floatingfoodname"
-                                label="Food name"
-                                className="mb-3"
-                            >
-                                <Form.Control type="text" placeholder="Enter food name" />
-                            </FloatingLabel>
-                            <FloatingLabel
-                                controlId="floatingdescription"
-                                label="Description"
-                                className="mb-3"
-                            >
-                                <Form.Control type="text" placeholder="Enter food description" />
-                            </FloatingLabel>
-                            <FloatingLabel
-                                controlId="floatingImgUrl"
-                                label="Image Url"
-                                className="mb-3"
-                            >
-                                <Form.Control type="text" placeholder="Enter image url" />
-                            </FloatingLabel>
-
-                            {inputList.map((x, i) => {
-                                return (
-                                    <FloatingLabel
-                                        controlId={'ingredients' + i}
-                                        label="Ingredient"
-                                        className="mb-3"
-                                        key={i}
-                                    >
-                                        <Form.Control type="text" placeholder="Enter food Ingredient" onChange={e => handleInputChange(e, i)} className='mb-3 ' />
-                                        <div>
-                                            {inputList.length !== 1 && <Button size='sm' variant='danger' className='ml-3 mr-3' onClick={() => handleRemoveClick(i)}>Remove</Button>}
-                                            {inputList.length - 1 === i && <Button className='ml-3 mr-3' size='sm' variant='primary' onClick={handleAddClick}>Add</Button>}
-                                        </div>
-                                    </FloatingLabel>
-                                )
-                            })}
-                            <Button className='ml-3 mr-3' size='md' variant='success'>Submit</Button>
-                        </Form>
-
-
+        <div style={{display: 'flex', justifyContent: 'center', alignContent: 'center'}}>
+                        <h1 style={{color: 'white'}}>Work in Progress</h1>
                     </div>
+            <div className="centered">
+                <div className='topRight'>
+                    <h1 style={{ color: 'white' }}>User list</h1>
                 </div>
-            </div>
-
-            <div className="split right">
-                <div className="centered">
-                    <div className='topRight'>
-                        <h1 style={{ color: 'white' }}>User list</h1>
-                    </div>
-                    <div className='daTable'>
-                        <Table striped bordered hover variant="dark">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pengguna && pengguna.length && pengguna.map(
-                                    (item, index) => {
-                                        return (
-                                            <tr key={index}><td>{index + 1}</td>
-                                                <td>{item.name}</td>
-                                                <td>{item.email}</td>
-                                                <td>{item.role}</td>
-                                                <td><Button size="sm" variant="primary">Edit</Button></td>
-                                            </tr>
-                                        )
-                                    })}
-                            </tbody>
-                        </Table>
-                    </div>
-                    <div className='bottomRight'>
-                        <h1 style={{ color: 'white' }}>Food list</h1>
-                    </div>
-                    <div className='daTable'>
-                        <Table striped bordered hover variant="dark">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Food Name</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-                                {makan && makan.length && makan.map((item, index) => {
-                                    return <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{item.name}</td>
-                                        <td>
-                                            <ButtonGroup aria-label="Action">
-                                                <Button size="sm" variant="primary" onClick={handleEditFood}>Edit</Button>
-                                                <Button size="sm" variant="danger" >Delete</Button>
-                                            </ButtonGroup>
-                                        </td>
-                                    </tr>
+                <div className='daTable'>
+                    <Table striped bordered hover variant="dark">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {pengguna && pengguna.length && pengguna.map(
+                                (item, index) => {
+                                    return (
+                                        <tr key={index}><td>{index + 1}</td>
+                                            <td>{item.name}</td>
+                                            <td>{item.email}</td>
+                                            <td>{item.role}</td>
+                                            <td><Button size="sm" variant="primary">Edit</Button></td>
+                                        </tr>
+                                    )
                                 })}
+                        </tbody>
+                    </Table>
+                </div>
+                <div className='bottomRight'>
+                    <h1 style={{ color: 'white' }}>Food list <Button size="md" variant="success" onClick={handleShowB}>Add Food</Button></h1>
+                </div>
+                <div className='daTable'>
+                    <Table striped bordered hover variant="dark">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Food Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                            </tbody>
-                        </Table>
-                    </div>
+                            {makan && makan.length && makan.map((item, index) => {
+                                return <tr key={index}>
+                                    <td>{index + 1}</td>
+                                    <td>{item.name}</td>
+                                    <td>
+                                        <ButtonGroup aria-label="Action">
+                                            <Button size="sm" variant="primary" onClick={handleEditFood}>Edit</Button>
+                                            <Button size="sm" variant="danger" >Delete</Button>
+                                        </ButtonGroup>
+                                    </td>
+                                </tr>
+                            })}
+
+                        </tbody>
+                    </Table>
                 </div>
             </div>
+
 
             <Modal show={showA} onHide={handleCloseA} bg='dark' text='light' backdrop="static">
                 <Modal.Header closeButton>
@@ -220,18 +172,18 @@ export default function AdminPanel() {
                     <Form onSubmit={handleEditFood}>
                         <FloatingLabel
                             controlId="floatingName"
-                            label="Name"
+                            label="Food name"
                             className="mb-3"
                         >
                             <Form.Control type="text" placeholder="Input name" value={''} onChange={(e) => setFoodName(e.target.value)} />
                         </FloatingLabel>
-                        <FloatingLabel controlId="floatingEmail" label="Email" className='mb-3'>
+                        <FloatingLabel controlId="floatingEmail" label="Food Description" className='mb-3'>
                             <Form.Control type="text" placeholder="Input email" value={''} onChange={(e) => setFoodDesc(e.target.value)} />
                         </FloatingLabel>
-                        <FloatingLabel controlId="floatingUrl" label="Profile Url" className='mb-3'>
+                        <FloatingLabel controlId="floatingUrl" label="Image Url" className='mb-3'>
                             <Form.Control type="url" placeholder="Password" value={''} onChange={(e) => setFoodIMG(e.target.value)} />
                         </FloatingLabel>
-                        <FloatingLabel controlId="floatingPhoneNumber" label="Phone number" className='mb-3'>
+                        <FloatingLabel controlId="floatingPhoneNumber" label="Ingredients" className='mb-3'>
                             <Form.Control type="number" placeholder="Number" value={''} onChange={(e) => setFoodIngre(e.target.value)} />
                         </FloatingLabel>
                     </Form>
@@ -241,6 +193,63 @@ export default function AdminPanel() {
                         Close
                     </Button>
                     <Button variant="primary" onClick={handleEditFood}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showB} onHide={handleCloseB} bg='dark' text='light' backdrop="static">
+                <Modal.Body>
+
+                    <h1 style={{ color: 'black' }}>Create food</h1>
+
+                    <Form onSubmit={handleSubmit}>
+                        <FloatingLabel
+                            controlId="floatingfoodname"
+                            label="Food name"
+                            className="mb-3"
+                        >
+                            <Form.Control type="text" placeholder="Enter food name" />
+                        </FloatingLabel>
+                        <FloatingLabel
+                            controlId="floatingdescription"
+                            label="Description"
+                            className="mb-3"
+                        >
+                            <Form.Control type="text" placeholder="Enter food description" />
+                        </FloatingLabel>
+                        <FloatingLabel
+                            controlId="floatingImgUrl"
+                            label="Image Url"
+                            className="mb-3"
+                        >
+                            <Form.Control type="text" placeholder="Enter image url" />
+                        </FloatingLabel>
+
+                        {inputList.map((x, i) => {
+                            return (
+                                <FloatingLabel
+                                    controlId={'ingredients' + i}
+                                    label="Ingredient"
+                                    className="mb-3"
+                                    key={i}
+                                >
+                                    <Form.Control type="text" placeholder="Enter food Ingredient" onChange={e => handleInputChange(e, i)} className='mb-3 ' />
+                                    <div>
+                                        {inputList.length !== 1 && <Button size='sm' variant='danger' className='ml-3 mr-3' onClick={() => handleRemoveClick(i)}>Remove</Button>}
+                                        {inputList.length - 1 === i && <Button className='ml-3 mr-3' size='sm' variant='primary' onClick={handleAddClick}>Add</Button>}
+                                    </div>
+                                </FloatingLabel>
+                            )
+                        })}
+                        <Button className='ml-3 mr-3' size='md' variant='success'>Submit</Button>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseB}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleCloseB}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
