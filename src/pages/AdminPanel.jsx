@@ -93,6 +93,9 @@ export default function AdminPanel() {
 
     return (
         <>
+        <div>
+            <h1>Work in Progress</h1>
+        </div>
             <div className="split left">
                 <div className="centered">
                     <div className='bagianKiri'>
