@@ -1,6 +1,6 @@
 import Axios from 'axios';
 
-const createFood = (nama, description, imageUrl, ingredients) => {
+const createFood = (neme, description, imageUrl, ingredients) => {
     return Axios({
         method: 'post',
         url: `${process.env.REACT_APP_BASEURL}/api/v1/create-food`,
@@ -9,10 +9,10 @@ const createFood = (nama, description, imageUrl, ingredients) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         data: {
-            name: nama,
+            name: neme,
             description: description,
             imageUrl: imageUrl,
-            ingredients: JSON.parse(ingredients)
+            ingredients: ingredients
         }
     })
 }
