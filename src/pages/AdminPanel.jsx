@@ -4,12 +4,13 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Modal from "react-bootstrap/Modal";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
-import { Form } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import getData from "../api_folder/ApiFood";
 import getAllUser from "../api_folder/ApiGetAllUser";
 import createFood from "../api_folder/ApiCreateFood";
+import * as Yup from "yup";
+import { Formik, Form, useField, Field, FieldArray } from "formik";
 
 export default function AdminPanel() {
     const [makan, setMakan] = useState([]);
@@ -23,9 +24,9 @@ export default function AdminPanel() {
 
     const [showA, setShowA] = useState(false);
     const handleCloseA = () => setShowA(false);
-    const handleShowA = (name, description, imageUrl, ingredients) => {
+    const handleShowA = (nama, description, imageUrl, ingredients) => {
         setShowA(true);
-        setFoodName(name);
+        setFoodName(nama);
         setFoodDesc(description);
         setFoodIMG(imageUrl);
         setFoodIngre(ingredients);
@@ -39,34 +40,68 @@ export default function AdminPanel() {
     const handleCloseC = () => setShowC(false);
     const handleShowC = () => setShowC(true);
 
-    const [ingr, setIngr] = useState({
-        ingredients: [''],
-    });
-
     const isLogin = Boolean(localStorage.getItem("token") || false);
 
-    const [inputList, setInputList] = useState([{ ingredients: "" }]);
+    const InputText = ({ label, ...props }) => {
+        const [field, meta] = useField(props);
+        return (
+            <div>
+                <label htmlFor={props.id || props.name}>{label}</label>
+                <input {...field} {...props} />
+                {meta.touched && meta.error ? (
+                    <div>{meta.error}</div>
+                ) : null}
+            </div>
+        )
+    };
 
     const getFoodId = async (foodId) => {
         if (isLogin) {
-          const res = await Axios({
-            method: "get",
-            url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
-            headers: {
-              apiKey: `${process.env.REACT_APP_APIKEY}`,
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          setIdMakan(res.data.data);
+            const res = await Axios({
+                method: "get",
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
+                headers: {
+                    apiKey: `${process.env.REACT_APP_APIKEY}`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+            });
+            setIdMakan(res.data.data);
         } else {
-          const res = await Axios({
-            method: "get",
-            url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
-            headers: {
-              apiKey: `${process.env.REACT_APP_APIKEY}`,
-            },
-          });
-          setIdMakan(res.data.data);
+            const res = await Axios({
+                method: "get",
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
+                headers: {
+                    apiKey: `${process.env.REACT_APP_APIKEY}`,
+                },
+            });
+            setIdMakan(res.data.data);
+        }
+    };
+
+    const updateFood = async (foodId) => {
+        if (isLogin) {
+            return Axios({
+                method: "post",
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${foodId}`,
+                headers: {
+                    apiKey: `${process.env.REACT_APP_APIKEY}`,
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                data: {
+                    name: foodName,
+                    description: foodDesc,
+                    imageUrl: foodIMG,
+                    ingredients: foodIngre
+                }
+            });
+        } else {
+            return Axios({
+                method: "post",
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${foodId}`,
+                headers: {
+                    apiKey: `${process.env.REACT_APP_APIKEY}`,
+                },
+            });
         }
     };
 
@@ -76,35 +111,21 @@ export default function AdminPanel() {
             console.log(makan);
         });
     };
-    
-    const handleInputChange = (e, index) => {
-        const { name, value } = e.target;
-        const list = [...inputList];
-        list[index][name] = value;
-        setInputList(list);
-    };
-
-    const handleRemoveClick = (index) => {
-        const list = [...inputList];
-        list.splice(index, 1);
-        setInputList(list);
-    };
-
-    const handleAddClick = () => {
-        setInputList([...inputList, { ingredients: "" }]);
-    };
-
 
     const handleEditFood = (id, foodName, foodDesc, foodIMG, foodIngre) => {
         handleShowA(id);
         setFoodName(foodName)
         setFoodDesc(foodDesc)
         setFoodIMG(foodIMG)
-        setFoodIngre(foodIngre)
+        setFoodIngre([foodIngre])
+        localStorage.setItem('getFoodId', id)
     };
 
-    const handleSaveEditFood = () => {
-        // for submot edit food
+    const handleSaveEditFood = (id) => {
+
+        updateFood(id).then(() => {
+            // 
+        })
     };
 
     const getEveryUser = () => {
@@ -114,12 +135,13 @@ export default function AdminPanel() {
         });
     };
 
-    const handlePostFood = (e) => {
-        // handle create food
-        e.preventDefault();
+    const handlePostFood = (neme, description, foodUrl, ingredients) => {
+        createFood(neme, description, foodUrl, ingredients).then((res) => {
+            console.log("Post Food: " + res.data.data);
+        })
 
 
-     };
+    };
 
     useEffect(() => {
         getAllFood();
@@ -153,23 +175,17 @@ export default function AdminPanel() {
                             </tr>
                         </thead>
                         <tbody>
-                            {pengguna &&
-                                pengguna.length &&
-                                pengguna.map((item, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>{index + 1}</td>
-                                            <td>{item.name}</td>
-                                            <td>{item.email}</td>
-                                            <td>{item.role}</td>
-                                            <td>
-                                                <Button size="sm" variant="primary" onClick={handleShowC}>
-                                                    Edit
-                                                </Button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
+                            {pengguna && pengguna.length && pengguna.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.email}</td>
+                                        <td>{item.role}</td>
+                                        <td><Button size="sm" variant="primary" onClick={handleShowC}>Edit</Button></td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </Table>
                 </div>
@@ -191,27 +207,23 @@ export default function AdminPanel() {
                             </tr>
                         </thead>
                         <tbody>
-                            {makan &&
-                                makan.length &&
-                                makan.map((item, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <React.Fragment>
-                                                <td>{index + 1}</td>
-                                                <td>{item.name}</td>
-                                                <td>
-                                                    <ButtonGroup aria-label="Action">
-                                                        <Button
-                                                            size="sm"
-                                                            variant="primary"
-                                                            onClick={() => handleEditFood(item.id, item.name, item.description, item.imageUrl, item.ingredients)}>Edit</Button>
-                                                        <Button size="sm" variant="danger">Delete</Button>
-                                                    </ButtonGroup>
-                                                </td>
-                                            </React.Fragment>
-                                        </tr>
-                                    );
-                                })}
+                            {makan && makan.length && makan.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <React.Fragment>
+                                            <td>{index + 1}</td>
+                                            <td>{item.name}</td>
+                                            <td><ButtonGroup aria-label="Action">
+                                                <Button
+                                                    size="sm"
+                                                    variant="primary"
+                                                    onClick={() => handleEditFood(item.id, item.name, item.description, item.imageUrl, item.ingredients)}>Edit</Button>
+                                                <Button size="sm" variant="danger">Delete</Button>
+                                            </ButtonGroup></td>
+                                        </React.Fragment>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </Table>
                 </div>
@@ -228,7 +240,7 @@ export default function AdminPanel() {
                     <Modal.Title>Edit food</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form onSubmit={handleSaveEditFood}>
+                    {/* <Form >
                         <FloatingLabel
                             controlId=""
                             label="Food name"
@@ -277,13 +289,13 @@ export default function AdminPanel() {
                                 onChange={(e) => setFoodIngre(e.target.value)}
                             />
                         </FloatingLabel>
-                    </Form>
+                    </Form> */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseA}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleSaveEditFood}>
+                    <Button variant="primary" onClick={() => handleSaveEditFood(localStorage.getItem("getFoodId"))}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
@@ -298,77 +310,128 @@ export default function AdminPanel() {
             >
                 <Modal.Body>
                     <h1 style={{ color: "black" }}>Create food</h1>
+                    <Formik initialValues={{
+                        neme: '',
+                        description: '',
+                        imageUrl: '',
+                        ingredients: [''],
+                    }}
+                        validationSchema={Yup.object({
+                            neme: Yup.string().required('Required'),
+                            description: Yup.string().required('Required'),
+                            imageUrl: Yup.string().required('Required'),
+                        })}
 
-                    <Form onSubmit={handlePostFood}>
+                        onSubmit={(values, actions) => {
+                            setTimeout(() => {
+
+                                alert(JSON.stringify(values, null, 2));
+                                actions.setSubmitting(true);
+                            }, 1000);
+                            handlePostFood(values.neme, values.description, values.imageUrl, values.ingredients)
+                        }}
+                    >
+                        <Form>
+                            <InputText
+                                label="Food name"
+                                name="neme"
+                                type='text'
+                                placeholder='Food name'
+                            />
+                            <InputText
+                                label="Description"
+                                name="description"
+                                type='text'
+                                placeholder='Food description'
+                            />
+
+                            <InputText
+                                label="Food Image URL"
+                                name="imageUrl"
+                                type='text'
+                                placeholder='Food Image URL'
+                            />
+                            {/* upload food image */}
+
+                            <FieldArray name="ingredients">
+                                {(fieldArrayProps) => {
+                                    const { push, remove, form } = fieldArrayProps;
+                                    const { values } = form;
+                                    const { ingredients } = values;
+                                    return (
+                                        <div>
+                                            {ingredients.map((ingredient, index) => (
+                                                <div
+                                                    key={index}
+                                                >
+                                                    <Field
+                                                        name={`ingredients[${index}]`}
+                                                        placeholder={`Ingredient ${index + 1}`}
+                                                    />
+                                                    {index > 0 && (
+                                                        <Button type="button" variant="danger" onClick={() => remove(index)}>
+                                                            Remove
+                                                        </Button>
+                                                    )}
+                                                    <Button type="button" variant="success" onClick={() => push('')}>
+                                                        Add
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )
+                                }}
+                            </FieldArray>
+                            <Button type="submit" variant="success">Submit</Button>
+                        </Form>
+
+                    </Formik>
+                    {/* <Form>
                         <FloatingLabel
                             controlId="floatingfoodname"
                             label="Food name"
                             className="mb-3"
                         >
-                            <Form.Control type="text" placeholder="Enter food name" />
+                            <Form.Control type="text" placeholder="Enter food name"  />
                         </FloatingLabel>
                         <FloatingLabel
                             controlId="floatingdescription"
                             label="Description"
                             className="mb-3"
                         >
-                            <Form.Control type="text" placeholder="Enter food description" />
+                            <Form.Control type="text" placeholder="Enter food description"  />
                         </FloatingLabel>
                         <FloatingLabel
                             controlId="floatingimgurl"
                             label="Image Url"
                             className="mb-3"
                         >
-                            <Form.Control type="text" placeholder="Enter image url" />
+                            <Form.Control type="text" placeholder="Enter image url"  />
                         </FloatingLabel>
 
-                        {inputList.map((x, i) => {
-                            return (
-                                <FloatingLabel
-                                    controlId={"ingredients" + i}
-                                    label="Ingredient"
-                                    className="mb-3"
-                                    key={i}
-                                >
-                                    <Form.Control
-                                        type="text"
-                                        placeholder="Enter food Ingredient"
-                                        onChange={(e) => handleInputChange(e, i)}
-                                        className="mb-3"
-                                    />
-                                    <div>
-                                        {inputList.length !== 1 && (
-                                            <Button
-                                                size="sm"
-                                                variant="danger"
-                                                className="ml-3 mr-3"
-                                                onClick={() => handleRemoveClick(i)}
-                                            >
-                                                Remove
-                                            </Button>
-                                        )}
-                                        {inputList.length - 1 === i && (
-                                            <Button
-                                                className="ml-3 mr-3"
-                                                size="sm"
-                                                variant="primary"
-                                                onClick={handleAddClick}
-                                            >
-                                                Add
-                                            </Button>
-                                        )}
-                                    </div>
-                                </FloatingLabel>
-                            );
-                        })}
-                    </Form>
+                        <div>
+                                        <FloatingLabel
+                                            controlId="floatingredient"
+                                            label={`Ingrediets`}
+                                            className="mb-3"
+                                        >
+                                            <Form.Control
+                                                type="text"
+                                                placeholder="Enter food Ingredient"
+                                                className="mb-3"
+                                            />
+                                            <div>
+                                                
+                                                
+                                            </div>
+                                        </FloatingLabel>
+                        </div>
+
+                    </Form> */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseB}>
                         Close
-                    </Button>
-                    <Button variant="success" onClick={handlePostFood}>
-                        Submit food
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -381,7 +444,7 @@ export default function AdminPanel() {
                 backdrop="static"
             >
                 <Modal.Body>
-                    <h1 style={{ color: "black" }}>Change role</h1>         
+                    <h1 style={{ color: "black" }}>Change role</h1>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseC}>
