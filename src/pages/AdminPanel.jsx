@@ -3,7 +3,6 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Modal from "react-bootstrap/Modal";
-import FloatingLabel from "react-bootstrap/FloatingLabel";
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import getData from "../api_folder/ApiFood";
@@ -11,6 +10,8 @@ import getAllUser from "../api_folder/ApiGetAllUser";
 import createFood from "../api_folder/ApiCreateFood";
 import * as Yup from "yup";
 import { Formik, Form, useField, Field, FieldArray } from "formik";
+import FormF from 'react-bootstrap/Form';
+import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 export default function AdminPanel() {
     const [makan, setMakan] = useState([]);
@@ -46,10 +47,18 @@ export default function AdminPanel() {
         const [field, meta] = useField(props);
         return (
             <div>
-                <label htmlFor={props.id || props.name}>{label}</label>
-                <input {...field} {...props} />
+                <FloatingLabel
+                    controlId="floating"
+                    htmlFor={props.id || props.name}
+                    label={label}
+                    className='mb-3 mt-3'
+                >
+                    <FormF.Control {...field} {...props} />
+                </FloatingLabel>
+                {/* <input {...field} {...props} />
+                <label htmlFor={props.id || props.name}>{label}</label> */}
                 {meta.touched && meta.error ? (
-                    <div>{meta.error}</div>
+                    <div style={{ color: 'red' }}>{label + ' ' + meta.error}</div>
                 ) : null}
             </div>
         )
@@ -229,6 +238,7 @@ export default function AdminPanel() {
                 </div>
             </div>
 
+            {/* MODAL EDIT FOOD */}
             <Modal
                 show={showA}
                 onHide={handleCloseA}
@@ -300,7 +310,8 @@ export default function AdminPanel() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
+                
+            {/* MODAL CREATE FOOD */}
             <Modal
                 show={showB}
                 onHide={handleCloseB}
@@ -365,15 +376,19 @@ export default function AdminPanel() {
                                                     key={index}
                                                 >
                                                     <Field
+                                                        type='text'
                                                         name={`ingredients[${index}]`}
+                                                        label={`Ingredient ${index + 1}`}
+                                                        className='mb-3 mt-3'
                                                         placeholder={`Ingredient ${index + 1}`}
-                                                    />
+                                                    >
+                                                    </Field>
                                                     {index > 0 && (
-                                                        <Button type="button" variant="danger" onClick={() => remove(index)}>
+                                                        <Button type="button" variant="danger" className="mt-1 mb-1" onClick={() => remove(index)}>
                                                             Remove
                                                         </Button>
-                                                    )}
-                                                    <Button type="button" variant="success" onClick={() => push('')}>
+                                                    )}{' '}
+                                                    <Button type="button" variant="success" className="mt-1 mb-1" onClick={() => push('')}>
                                                         Add
                                                     </Button>
                                                 </div>
