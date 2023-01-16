@@ -3,7 +3,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Modal from "react-bootstrap/Modal";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Axios from "axios";
 import getData from "../api_folder/ApiFood";
 import getAllUser from "../api_folder/ApiGetAllUser";
@@ -172,32 +172,26 @@ export default function AdminPanel() {
                 <div className="topRight">
                     <h1 style={{ color: "white" }}>User list</h1>
                 </div>
-                <div className="daTable">
-                    <Table striped bordered hover variant="dark">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {pengguna && pengguna.length && pengguna.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{item.name}</td>
-                                        <td>{item.email}</td>
-                                        <td>{item.role}</td>
-                                        <td><Button size="sm" variant="primary" onClick={handleShowC}>Edit</Button></td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </Table>
+                <div className="daSquare">
+                    {pengguna && pengguna.length && pengguna.map((item, index) => {
+                        return (
+                            <div className="userList" key={index}>
+                                    <img src={item.profilePictureUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
+                                    <div className="clsLabel">
+                                        <h4>{item.name}</h4>
+                                        <h6 style={{color: 'grey'}}>{item.role}</h6>
+                                    </div>
+                                    <div className="clsBtn">
+                                        <Button variant="primary">Edit role</Button>
+                                    </div>
+                            </div>
+                        );
+                    })}
                 </div>
+
+                {/* SEPERATOR */}
+                <hr />
+
                 <div className="bottomRight">
                     <h1 style={{ color: "white" }}>
                         Food list{" "}
@@ -206,35 +200,49 @@ export default function AdminPanel() {
                         </Button>
                     </h1>
                 </div>
-                <div className="daTable">
-                    <Table striped bordered hover variant="dark">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Food Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {makan && makan.length && makan.map((item, index) => {
-                                return (
-                                    <tr key={index}>
-                                        <React.Fragment>
-                                            <td>{index + 1}</td>
-                                            <td>{item.name}</td>
-                                            <td><ButtonGroup aria-label="Action">
-                                                <Button
-                                                    size="sm"
-                                                    variant="primary"
-                                                    onClick={() => handleEditFood(item.id, item.name, item.description, item.imageUrl, item.ingredients)}>Edit</Button>
-                                                <Button size="sm" variant="danger">Delete</Button>
-                                            </ButtonGroup></td>
-                                        </React.Fragment>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </Table>
+                <div className="daSquare">
+
+                    {makan && makan.map((m, i) => (
+                        <Fragment key={i.id}>
+                            <Formik initialValues={{
+                                neme: m.name,
+                                description: m.description,
+                                imageUrl: m.imageUrl,
+                                ingredients: [''],
+                            }}
+                                validationSchema={Yup.object({
+                                    neme: Yup.string().required('Required'),
+                                    description: Yup.string().required('Required'),
+                                    imageUrl: Yup.string().required('Required'),
+                                    ingredients: Yup.string().required('Required'),
+                                })}
+
+                                onSubmit={(values, actions) => {
+                                    setTimeout(() => {
+
+                                        alert(JSON.stringify(values, null, 2));
+                                        actions.setSubmitting(true);
+                                    }, 1000);
+                                    handleEditFood(values.neme, values.description, values.imageUrl, values.ingredients)
+                                }}
+                            >
+                                <Form>
+                                <div className="userList" key={i}>
+                                    <img src={m.imageUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
+                                    <div className="clsLabel">
+                                        <h4>{m.name}</h4>
+                                        <h6 style={{color: '#dedede'}}>{m.description}</h6>
+                                        <h6 style={{color: 'grey'}}>{' '+m.ingredients}</h6>
+                                    </div>
+                                    <div className="clsBtn">
+                                        <Button variant="primary">Edit food</Button>
+                                    </div>
+                            </div>
+                                </Form>
+                            </Formik>
+                        </Fragment>
+                    ))}
+
                 </div>
             </div>
 
@@ -246,71 +254,10 @@ export default function AdminPanel() {
                 text="light"
                 backdrop="static"
             >
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit food</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {/* <Form >
-                        <FloatingLabel
-                            controlId=""
-                            label="Food name"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder=""
-                                value={foodName}
-                                onChange={(e) => setFoodName(e.target.value)}
-                            />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId=""
-                            label="Food Description"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder=""
-                                value={foodDesc}
-                                onChange={(e) => setFoodDesc(e.target.value)}
-                            />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId=""
-                            label="Image URL"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder=""
-                                value={foodIMG}
-                                onChange={(e) => setFoodIMG(e.target.value)}
-                            />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId=""
-                            label="Ingredients"
-                            className="mb-3"
-                        >
-                            <Form.Control
-                                type="text"
-                                placeholder=""
-                                value={foodIngre}
-                                onChange={(e) => setFoodIngre(e.target.value)}
-                            />
-                        </FloatingLabel>
-                    </Form> */}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseA}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={() => handleSaveEditFood(localStorage.getItem("getFoodId"))}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
+
+
             </Modal>
-                
+
             {/* MODAL CREATE FOOD */}
             <Modal
                 show={showB}
@@ -362,7 +309,6 @@ export default function AdminPanel() {
                                 type='text'
                                 placeholder='Food Image URL'
                             />
-                            {/* upload food image */}
 
                             <FieldArray name="ingredients">
                                 {(fieldArrayProps) => {
@@ -399,50 +345,7 @@ export default function AdminPanel() {
                             </FieldArray>
                             <Button type="submit" variant="success">Submit</Button>
                         </Form>
-
                     </Formik>
-                    {/* <Form>
-                        <FloatingLabel
-                            controlId="floatingfoodname"
-                            label="Food name"
-                            className="mb-3"
-                        >
-                            <Form.Control type="text" placeholder="Enter food name"  />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId="floatingdescription"
-                            label="Description"
-                            className="mb-3"
-                        >
-                            <Form.Control type="text" placeholder="Enter food description"  />
-                        </FloatingLabel>
-                        <FloatingLabel
-                            controlId="floatingimgurl"
-                            label="Image Url"
-                            className="mb-3"
-                        >
-                            <Form.Control type="text" placeholder="Enter image url"  />
-                        </FloatingLabel>
-
-                        <div>
-                                        <FloatingLabel
-                                            controlId="floatingredient"
-                                            label={`Ingrediets`}
-                                            className="mb-3"
-                                        >
-                                            <Form.Control
-                                                type="text"
-                                                placeholder="Enter food Ingredient"
-                                                className="mb-3"
-                                            />
-                                            <div>
-                                                
-                                                
-                                            </div>
-                                        </FloatingLabel>
-                        </div>
-
-                    </Form> */}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseB}>

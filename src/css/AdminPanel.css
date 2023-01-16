@@ -1,17 +1,3 @@
-/* Split the screen in half */
-
-/* Control the left side */
-.left {
-    left: 0;
-    background-color: #111;
-}
-
-/* Control the right side */
-.right {
-    right: 0;
-    background-color: rgb(0, 0, 0);
-}
-
 /* If you want the content centered horizontally and vertically */
 .centered {
     position: absolute;
@@ -27,15 +13,50 @@
     border-radius: 50%;
 }
 
-.daTable {
+.daSquare {
     background-color: rgba(0, 0, 0, 0.5);
     width: 50vw;
     height: 40vh;
-    overflow-y: auto;
+    overflow-x: auto;
     flex-shrink: 0;
 }
 
 .bagianKiri {
     padding: 32px;
     width: 50vw;
+}
+
+.userList {
+    display: flex;
+    width: 100%;
+    background-color: #111111;
+    height: 100px;
+    justify-content: space-between;
+    align-items: center;
+    
+}
+
+.avatar {
+    vertical-align: middle;
+    width: 1px;
+    height: 50px;
+    border-radius: 100%;
+    margin: 0px 12px;
+}
+
+.clsLabel {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    color: white;
+}
+
+.clsBtn {
+    width: 16%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 12px;
 }
