@@ -206,7 +206,7 @@ export default function App() {
 
           {food.map((item, index) => {
             return (
-              <Card key={index} text="light" bg="dark" border="secondary">
+              <Card key={index} text="light" bg="dark" border="secondary" onClick={() => handleGetRating(item.id)}>
                 <Card.Header>
                   <div className="ccTitle">
                     <Card.Title>{item.name.toUpperCase()}</Card.Title>

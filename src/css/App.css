@@ -108,6 +108,7 @@ img {
   height: 300px;
   border-radius: 10px;
   margin-bottom: 10px;
+  cursor: pointer;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
