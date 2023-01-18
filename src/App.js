@@ -429,9 +429,7 @@ export default function App() {
             </FloatingLabel>
             <Button
               variant="success"
-              onClick={() =>
-                handlePostReview(localStorage.getItem("getFoodId"))
-              }
+              onClick={() => handlePostReview(localStorage.getItem("getFoodId"))}
               className="mb-3"
             >
               Post review
