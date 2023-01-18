@@ -410,7 +410,7 @@ export default function App() {
               label="Rating"
               onChange={(e) => setDaRating(e.target.value)}
             >
-              <Form.Select aria-label="Floating label select example">
+              <Form.Select aria-label="Floating label select example" disabled={!isLogin}>
                 <option>Choose rating</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
@@ -425,12 +425,13 @@ export default function App() {
               className="mt-3 mb-3"
               onChange={(e) => setDaReview(e.target.value)}
             >
-              <Form.Control type="text" placeholder="Review" />
+              <Form.Control type="text" placeholder="Review" disabled={!isLogin}/>
             </FloatingLabel>
             <Button
               variant="success"
               onClick={() => handlePostReview(localStorage.getItem("getFoodId"))}
               className="mb-3"
+              disabled={!isLogin}
             >
               Post review
             </Button>
