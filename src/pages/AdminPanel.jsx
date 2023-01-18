@@ -23,6 +23,12 @@ export default function AdminPanel() {
     const [foodIMG, setFoodIMG] = useState();
     const [foodIngre, setFoodIngre] = useState([]);
 
+    const [roleId, setRoleId] = useState();
+    const [role, setRole] = useState();
+    const [roleName, setRoleName] = useState();
+    const [roleImg, setRoleImg] = useState();
+
+
     const [showA, setShowA] = useState(false);
     const handleCloseA = () => setShowA(false);
     const handleShowA = (nama, description, imageUrl, ingredients) => {
@@ -39,7 +45,14 @@ export default function AdminPanel() {
 
     const [showC, setShowC] = useState(false);
     const handleCloseC = () => setShowC(false);
-    const handleShowC = () => setShowC(true);
+    const handleShowC = (roleId, role, name, roleImg) => {
+        setShowC(roleId)
+        setRoleId(roleId)
+        setRoleName(name)
+        setRoleImg(roleImg)
+        setRole(role)
+        localStorage.setItem("getUserRoleId", roleId);
+    }
 
     const isLogin = Boolean(localStorage.getItem("token") || false);
 
@@ -114,10 +127,21 @@ export default function AdminPanel() {
         }
     };
 
+    const updateUserRole = (userId) => {
+        return Axios({
+            method: 'post',
+            url: `${process.env.REACT_APP_BASEURL}/api/v1/update-user-role/${userId}`,
+            headers: {
+                apiKey: `${process.env.REACT_APP_APIKEY}`,
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            data: { role: role }
+        })
+    }
+
     const getAllFood = () => {
         getData().then((res) => {
             setMakan(res.data.data);
-            console.log(makan);
         });
     };
 
@@ -133,24 +157,29 @@ export default function AdminPanel() {
     const handleSaveEditFood = (id) => {
 
         updateFood(id).then(() => {
-            // 
+            alert('Food updated!')
         })
     };
 
     const getEveryUser = () => {
         getAllUser().then((res) => {
             setPengguna(res.data.data);
-            console.log(pengguna);
         });
     };
 
     const handlePostFood = (neme, description, foodUrl, ingredients) => {
-        createFood(neme, description, foodUrl, ingredients).then((res) => {
-            console.log("Post Food: " + res.data.data);
+        createFood(neme, description, foodUrl, ingredients).then(() => {
+            getAllFood();
+            handleCloseB();
+            alert('Food created!')
         })
-
-
     };
+
+    const handleChangeRole = (userId) => {
+        updateUserRole(userId);
+        getEveryUser();
+        handleCloseC();
+    }
 
     useEffect(() => {
         getAllFood();
@@ -176,14 +205,14 @@ export default function AdminPanel() {
                     {pengguna && pengguna.length && pengguna.map((item, index) => {
                         return (
                             <div className="userList" key={index}>
-                                    <img src={item.profilePictureUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
-                                    <div className="clsLabel">
-                                        <h4>{item.name}</h4>
-                                        <h6 style={{color: 'grey'}}>{item.role}</h6>
-                                    </div>
-                                    <div className="clsBtn">
-                                        <Button variant="primary">Edit role</Button>
-                                    </div>
+                                <img src={item.profilePictureUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
+                                <div className="clsLabel">
+                                    <h4>{item.name}</h4>
+                                    <h6 style={{ color: 'grey' }}>{item.role}</h6>
+                                </div>
+                                <div className="clsBtn">
+                                    <Button variant="primary" onClick={() => handleShowC(item.id, item.role, item.name, item.profilePictureUrl)}>Edit role</Button>
+                                </div>
                             </div>
                         );
                     })}
@@ -203,7 +232,7 @@ export default function AdminPanel() {
                 <div className="daSquare">
 
                     {makan && makan.map((m, i) => (
-                        <Fragment key={i.id}>
+                        <Fragment key={i}>
                             <Formik initialValues={{
                                 neme: m.name,
                                 description: m.description,
@@ -227,17 +256,17 @@ export default function AdminPanel() {
                                 }}
                             >
                                 <Form>
-                                <div className="userList" key={i}>
-                                    <img src={m.imageUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
-                                    <div className="clsLabel">
-                                        <h4>{m.name}</h4>
-                                        <h6 style={{color: '#dedede'}}>{m.description}</h6>
-                                        <h6 style={{color: 'grey'}}>{' '+m.ingredients}</h6>
+                                    <div className="userList" key={i}>
+                                        <img src={m.imageUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
+                                        <div className="clsLabel">
+                                            <h4>{m.name}</h4>
+                                            <h6 style={{ color: '#dedede' }}>{m.description}</h6>
+                                            <h6 style={{ color: 'grey' }}>{' ' + m.ingredients}</h6>
+                                        </div>
+                                        <div className="clsBtn">
+                                            <Button variant="primary" onClick={handleEditFood}>Edit food</Button>
+                                        </div>
                                     </div>
-                                    <div className="clsBtn">
-                                        <Button variant="primary">Edit food</Button>
-                                    </div>
-                            </div>
                                 </Form>
                             </Formik>
                         </Fragment>
@@ -254,6 +283,17 @@ export default function AdminPanel() {
                 text="light"
                 backdrop="static"
             >
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit food</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseA}>
+                        Close
+                    </Button>
+                </Modal.Footer>
 
 
             </Modal>
@@ -353,7 +393,7 @@ export default function AdminPanel() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
+            {/* MODAL CHANGE ROLE */}
             <Modal
                 show={showC}
                 onHide={handleCloseC}
@@ -361,14 +401,32 @@ export default function AdminPanel() {
                 text="light"
                 backdrop="static"
             >
+                <Modal.Header>
+                    <Modal.Title>
+                        <h1 style={{ color: "black" }}>Change role</h1>
+                    </Modal.Title>
+                </Modal.Header>
                 <Modal.Body>
-                    <h1 style={{ color: "black" }}>Change role</h1>
+                    <div className="userShow">
+                        <img src={roleImg} alt="Avatar" className="avatarPop" style={{ objectFit: 'cover', width: '50px' }} />
+                        <div className="clsLabelNem">
+                            <h4>{roleName + ' ('+role+')'}</h4>
+                            <FloatingLabel controlId="floatingSelect" label={role} onChange={(e) => setRole(e.target.value)}>
+                                <FormF.Select aria-label="Floating label select example">
+                                    <option>Choose</option>
+                                    <option value="user">User</option>
+                                    <option value="general">General</option>
+                                    <option value="admin">Admin</option>
+                                </FormF.Select>
+                            </FloatingLabel>
+                        </div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseC}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={handleCloseC}>
+                    <Button variant="primary" onClick={() => handleChangeRole(localStorage.getItem('getUserRoleId'))}>
                         Save Changes
                     </Button>
                 </Modal.Footer>
