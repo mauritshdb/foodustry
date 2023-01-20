@@ -393,13 +393,13 @@ export default function App() {
               />
               <h1>{foodIds.name}</h1>
               <p className="kartDesc">{foodIds.description}</p>
-              <Row>
+              {/* <li> */}
                 <p>Ingredients</p>
                 {foodIds.ingredients &&
                   foodIds.ingredients.map((item, i) => {
-                    return <Col key={i}>{item}</Col>;
+                    return <Badge key={i} pill bg="secondary">{item}</Badge>;
                   })}
-              </Row>
+              {/* </li> */}
             </div>
           </div>
           <div className="split kanan">
@@ -451,7 +451,7 @@ export default function App() {
                         }}
                       />
                       <p>
-                        <span>{item.user.name}</span>{" "}
+                        {item.user.name + " "}
                         <IconContext.Provider value={{ color: "orange" }}>
                           <AiIcons.AiFillStar />
                         </IconContext.Provider>
