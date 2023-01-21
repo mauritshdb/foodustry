@@ -77,6 +77,22 @@ export default function AdminPanel() {
         )
     };
 
+    const deleteFood = () => {
+        return Axios({
+            method: "delete",
+            url: `${process.env.REACT_APP_BASEURL}/api/v1/delete-food/${localStorage.getItem("getFoodId")}`,
+            headers: {
+                apiKey: `${process.env.REACT_APP_APIKEY}`,
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        }).then(() => {
+            alert('Food deleted!')
+            handleCloseA();
+            getAllFood();
+            window.location.reload();
+        })
+    }
+
     const updateFood = async (values) => {
         if (isLogin) {
             return Axios({
@@ -161,7 +177,6 @@ export default function AdminPanel() {
                     alignContent: "center",
                 }}
             >
-                <h1 style={{ color: "white" }}>Work in Progress</h1>
             </div>
             <div className="centered">
                 <div className="topRight">
@@ -225,7 +240,9 @@ export default function AdminPanel() {
                 backdrop="static"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title>Edit food</Modal.Title>
+                    <Modal.Title>
+                        Edit food <Button type="button" variant="danger" size="sm" onClick={deleteFood}>Delete Food</Button>
+                    </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                 <Formik initialValues={{
