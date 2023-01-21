@@ -393,13 +393,13 @@ export default function App() {
               />
               <h1>{foodIds.name}</h1>
               <p className="kartDesc">{foodIds.description}</p>
-              {/* <li> */}
+
                 <p>Ingredients</p>
                 {foodIds.ingredients &&
                   foodIds.ingredients.map((item, i) => {
                     return <Badge key={i} pill bg="secondary">{item}</Badge>;
                   })}
-              {/* </li> */}
+
             </div>
           </div>
           <div className="split kanan">
