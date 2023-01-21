@@ -257,13 +257,6 @@ export default function AdminPanel() {
                             imageUrl: Yup.string().required('Required'),
                         })}
 
-                        // onSubmit={(values, actions) => {
-                        //     setTimeout(() => {
-                        //         alert(JSON.stringify(values, null, 2));
-                        //         actions.setSubmitting(true);
-                        //     }, 1000);
-                        //     updateFood(values.neme, values.description, values.imageUrl, values.ingredients)
-                        // }}
                         onSubmit={updateFood}
                     >
                         <Form>
