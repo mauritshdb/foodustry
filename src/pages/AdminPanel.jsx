@@ -1,5 +1,4 @@
 import "../css/AdminPanel.css";
-import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Modal from "react-bootstrap/Modal";
@@ -15,9 +14,9 @@ import FloatingLabel from 'react-bootstrap/FloatingLabel';
 
 export default function AdminPanel() {
     const [makan, setMakan] = useState([]);
-    const [idMakan, setIdMakan] = useState([]);
     const [pengguna, setPengguna] = useState([]);
 
+    const [foodId, setFoodId] = useState();
     const [foodName, setFoodName] = useState();
     const [foodDesc, setFoodDesc] = useState();
     const [foodIMG, setFoodIMG] = useState();
@@ -31,12 +30,13 @@ export default function AdminPanel() {
 
     const [showA, setShowA] = useState(false);
     const handleCloseA = () => setShowA(false);
-    const handleShowA = (nama, description, imageUrl, ingredients) => {
-        setShowA(true);
-        setFoodName(nama);
-        setFoodDesc(description);
-        setFoodIMG(imageUrl);
-        setFoodIngre(ingredients);
+    const handleShowA = (foodId, foodName, foodDesc, foodIMG, foodIngre) => {
+        setShowA(foodId);
+        setFoodName(foodName);
+        setFoodDesc(foodDesc);
+        setFoodIMG(foodIMG);
+        setFoodIngre(foodIngre);
+        localStorage.setItem('getFoodId', foodId)
     };
 
     const [showB, setShowB] = useState(false);
@@ -77,53 +77,35 @@ export default function AdminPanel() {
         )
     };
 
-    const getFoodId = async (foodId) => {
-        if (isLogin) {
-            const res = await Axios({
-                method: "get",
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
-                headers: {
-                    apiKey: `${process.env.REACT_APP_APIKEY}`,
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
-            setIdMakan(res.data.data);
-        } else {
-            const res = await Axios({
-                method: "get",
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/foods/${foodId}`,
-                headers: {
-                    apiKey: `${process.env.REACT_APP_APIKEY}`,
-                },
-            });
-            setIdMakan(res.data.data);
-        }
-    };
-
-    const updateFood = async (foodId) => {
+    const updateFood = async (values) => {
         if (isLogin) {
             return Axios({
                 method: "post",
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${foodId}`,
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${localStorage.getItem("getFoodId")}`,
                 headers: {
                     apiKey: `${process.env.REACT_APP_APIKEY}`,
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
                 },
                 data: {
                     name: foodName,
-                    description: foodDesc,
-                    imageUrl: foodIMG,
+                    description: values.description,
+                    imageUrl: values.imageUrl,
                     ingredients: foodIngre
                 }
             });
         } else {
             return Axios({
                 method: "post",
-                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${foodId}`,
+                url: `${process.env.REACT_APP_BASEURL}/api/v1/update-food/${localStorage.getItem("getFoodId")}`,
                 headers: {
                     apiKey: `${process.env.REACT_APP_APIKEY}`,
                 },
-            });
+            }).then(() => {
+                alert('Food updated!')
+                handleCloseA();
+                getAllFood();
+                window.location.reload();
+            })
         }
     };
 
@@ -143,22 +125,6 @@ export default function AdminPanel() {
         getData().then((res) => {
             setMakan(res.data.data);
         });
-    };
-
-    const handleEditFood = (id, foodName, foodDesc, foodIMG, foodIngre) => {
-        handleShowA(id);
-        setFoodName(foodName)
-        setFoodDesc(foodDesc)
-        setFoodIMG(foodIMG)
-        setFoodIngre([foodIngre])
-        localStorage.setItem('getFoodId', id)
-    };
-
-    const handleSaveEditFood = (id) => {
-
-        updateFood(id).then(() => {
-            alert('Food updated!')
-        })
     };
 
     const getEveryUser = () => {
@@ -211,7 +177,7 @@ export default function AdminPanel() {
                                     <h6 style={{ color: 'grey' }}>{item.role}</h6>
                                 </div>
                                 <div className="clsBtn">
-                                    <Button variant="primary" onClick={() => handleShowC(item.id, item.role, item.name, item.profilePictureUrl)}>Edit role</Button>
+                                    <Button variant="secondary" onClick={() => handleShowC(item.id, item.role, item.name, item.profilePictureUrl)}>Edit role</Button>
                                 </div>
                             </div>
                         );
@@ -233,29 +199,6 @@ export default function AdminPanel() {
 
                     {makan && makan.map((m, i) => (
                         <Fragment key={i}>
-                            <Formik initialValues={{
-                                neme: m.name,
-                                description: m.description,
-                                imageUrl: m.imageUrl,
-                                ingredients: [''],
-                            }}
-                                validationSchema={Yup.object({
-                                    neme: Yup.string().required('Required'),
-                                    description: Yup.string().required('Required'),
-                                    imageUrl: Yup.string().required('Required'),
-                                    ingredients: Yup.string().required('Required'),
-                                })}
-
-                                onSubmit={(values, actions) => {
-                                    setTimeout(() => {
-
-                                        alert(JSON.stringify(values, null, 2));
-                                        actions.setSubmitting(true);
-                                    }, 1000);
-                                    handleEditFood(values.neme, values.description, values.imageUrl, values.ingredients)
-                                }}
-                            >
-                                <Form>
                                     <div className="userList" key={i}>
                                         <img src={m.imageUrl} alt="Avatar" className="avatar" style={{ objectFit: 'cover', width: '50px' }} />
                                         <div className="clsLabel">
@@ -264,11 +207,9 @@ export default function AdminPanel() {
                                             <h6 style={{ color: 'grey' }}>{' ' + m.ingredients}</h6>
                                         </div>
                                         <div className="clsBtn">
-                                            <Button variant="primary" onClick={handleEditFood}>Edit food</Button>
+                                            <Button variant="secondary" onClick={() => handleShowA(m.id, m.name, m.description, m.imageUrl, m.ingredients)}>Edit food</Button>
                                         </div>
                                     </div>
-                                </Form>
-                            </Formik>
                         </Fragment>
                     ))}
 
@@ -287,15 +228,90 @@ export default function AdminPanel() {
                     <Modal.Title>Edit food</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                <Formik initialValues={{
+                        neme: foodName,
+                        description: foodDesc,
+                        imageUrl: foodIMG,
+                        ingredients: foodIngre,
+                    }}
+                        validationSchema={Yup.object({
+                            neme: Yup.string().required('Required'),
+                            description: Yup.string().required('Required'),
+                            imageUrl: Yup.string().required('Required'),
+                        })}
 
+                        // onSubmit={(values, actions) => {
+                        //     setTimeout(() => {
+                        //         alert(JSON.stringify(values, null, 2));
+                        //         actions.setSubmitting(true);
+                        //     }, 1000);
+                        //     updateFood(values.neme, values.description, values.imageUrl, values.ingredients)
+                        // }}
+                        onSubmit={updateFood}
+                    >
+                        <Form>
+                            <InputText
+                                label="Food name"
+                                name="neme"
+                                type='text'
+                                placeholder='Food name'
+                            />
+                            <InputText
+                                label="Description"
+                                name="description"
+                                type='text'
+                                placeholder='Food description'
+                            />
+
+                            <InputText
+                                label="Food Image URL"
+                                name="imageUrl"
+                                type='text'
+                                placeholder='Food Image URL'
+                            />
+
+                            <FieldArray name="ingredients">
+                                {(fieldArrayProps) => {
+                                    const { push, remove, form } = fieldArrayProps;
+                                    const { values } = form;
+                                    const { ingredients } = values;
+                                    return (
+                                        <div>
+                                            {ingredients.map((ingredient, index) => (
+                                                <div
+                                                    key={index}
+                                                >
+                                                    <Field
+                                                        type='text'
+                                                        name={`ingredients[${index}]`}
+                                                        label={`Ingredient ${index + 1}`}
+                                                        className='mb-3 mt-3'
+                                                        placeholder={`Ingredient ${index + 1}`}
+                                                    >
+                                                    </Field>
+                                                    {index > 0 && (
+                                                        <Button type="button" variant="danger" className="mt-1 mb-1" onClick={() => remove(index)}>
+                                                            Remove
+                                                        </Button>
+                                                    )}{' '}
+                                                    <Button type="button" variant="success" className="mt-1 mb-1" onClick={() => push('')}>
+                                                        Add
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )
+                                }}
+                            </FieldArray>
+                            <Button type="submit" variant="success">Submit</Button>
+                        </Form>
+                    </Formik>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseA}>
                         Close
                     </Button>
                 </Modal.Footer>
-
-
             </Modal>
 
             {/* MODAL CREATE FOOD */}
@@ -322,7 +338,6 @@ export default function AdminPanel() {
 
                         onSubmit={(values, actions) => {
                             setTimeout(() => {
-
                                 alert(JSON.stringify(values, null, 2));
                                 actions.setSubmitting(true);
                             }, 1000);
@@ -410,7 +425,7 @@ export default function AdminPanel() {
                     <div className="userShow">
                         <img src={roleImg} alt="Avatar" className="avatarPop" style={{ objectFit: 'cover', width: '50px' }} />
                         <div className="clsLabelNem">
-                            <h4>{roleName + ' ('+role+')'}</h4>
+                            <h4>{roleName + ' (' + role + ')'}</h4>
                             <FloatingLabel controlId="floatingSelect" label={role} onChange={(e) => setRole(e.target.value)}>
                                 <FormF.Select aria-label="Floating label select example">
                                     <option>Choose</option>
